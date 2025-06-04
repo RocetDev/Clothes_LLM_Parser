@@ -7,9 +7,9 @@ import markdownify
 import re
 
 
-def scrape(URL: str) -> str:
+def scrape(URL: str, time: bool=True) -> str:
     with sync_playwright() as p:
-        browser = p.chromium.launch(
+        browser = p.firefox.launch(
             headless=True
         )
         
@@ -33,12 +33,15 @@ def scrape(URL: str) -> str:
         }''')
 
         try:
-            page.wait_for_timeout(random.uniform(2, 5) * 1000)
+            if time:
+                page.wait_for_timeout(random.uniform(2, 5) * 1000)
+
             page.goto(URL)
 
             html_page = page.content()
 
-            page.wait_for_timeout(random.uniform(2, 5) * 1000)
+            if time:
+                page.wait_for_timeout(random.uniform(2, 5) * 1000)
         except Exception as e:
             print('Error: ', e)
         finally:
